@@ -3,7 +3,7 @@ from aiogram import Bot, Dispatcher, executor, types
 
 url = 'https://api.thecatapi.com/v1/images/search'
 
-bot = Bot(token=token)
+#bot = Bot(token=token)
 dp = Dispatcher(bot)
 
 
