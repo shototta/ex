@@ -22,6 +22,7 @@ choose_pay = ReplyKeyboardMarkup(resize_keyboard=True).insert(b2_1).add(b2_2).ad
 
 back = KeyboardButton('Вернуться')
 fp2p_all = ReplyKeyboardMarkup(resize_keyboard=True).insert(back)
+kat_again = ReplyKeyboardMarkup(resize_keyboard=True).insert(kat)
 
 f2p_t = "чета про:" \
         "робототехнику" \
@@ -66,4 +67,4 @@ p2p_t = "чета про:" \
 sait = InlineKeyboardButton("перейти на сайт", callback_data='sait')
 keyboard = InlineKeyboardMarkup().insert(sait)
 
-info = {"я хороший я хороший", keyboard}
+info = "я хороший я хороший"

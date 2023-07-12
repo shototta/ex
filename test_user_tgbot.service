@@ -1,0 +1,13 @@
+[Unit]
+Description=Telegram Bot
+After=network.target
+
+[Service]
+User=test_user
+Group=test_user
+WorkingDirectory=/home/test_user/ex/
+Environment="PYTHONPATH=/home/test_user/ex/"
+ExecStart=/home/test_user/ex/.venv/bin/python /home/test_user/ex/kvant_bot.py
+
+[Install]
+WantedBy=multi-user.target

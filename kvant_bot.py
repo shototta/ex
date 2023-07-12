@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from kvant_button import choose_kat, choose_pay, fp2p_all, f2p_t, fp2p_t, p2p_t, info, sait, keyboard
+from kvant_button import choose_kat, choose_pay, fp2p_all, f2p_t, fp2p_t, p2p_t, info, sait, keyboard, kat_again
 
 
 bot = Bot(token)
@@ -21,8 +21,8 @@ async def start_handler(message: types.Message, state: FSMContext):
 async def kat_handler(message: types.Message, state: FSMContext):
     answer = message.text
     if answer == "Общее":
-        await state.set_state('stil')
-        await handler(message, state)
+        await state.set_state('ssil')
+        await stil_handler(message, state)
     elif answer == "О программах":
         await state.set_state('prog')
         await prog_handler(message, state)
@@ -39,6 +39,23 @@ async def kat_handler(message: types.Message, state: FSMContext):
         await message.answer('Выберите интересующий Вас раздел', reply_markup= choose_kat)
         await state.set_state('vb')
         #асуждаю, но а что поделаешь
+
+
+@dp.message_handler(state='ssil')
+async def stil_handler(message: types.Message, state: FSMContext):
+    await message.answer(info, reply_markup=kat_again)
+    await state.set_state('kill')
+
+
+@dp.message_handler(state='ssil')
+async def kill_handler(message: types.Message, state: FSMContext):
+    answer = message.text
+    if answer == "К каталогу":
+        await state.set_state('vb')
+        await kat_handler(message,state)
+    else:
+        await state.set_state('ssil')
+        await kill_handler(message, state)
 
 
 @dp.message_handler(state='check')
@@ -103,14 +120,9 @@ async def back_pay_pls(message: types.Message, state: FSMContext):
     await prog_handler(message, state)
 
 
-@dp.message_handler(state='ssil')
-async def handler(message: types.Message, state: FSMContext):
-    await message.answer(**info)
 
 
-@dp.callback_query_handler(lambda c: c.data == 'sait', state='ssil')
-async def process(callback_query: types.CallbackQuery, state: FSMContext):
-    await callback_query.answer()
+
 
 
 
