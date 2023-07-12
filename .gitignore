@@ -1,0 +1,5 @@
+Config.py
+*.jpg
+.venv
+.idea
+__pycache__
