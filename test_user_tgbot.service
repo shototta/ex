@@ -5,9 +5,9 @@ After=network.target
 [Service]
 User=test_user
 Group=test_user
-WorkingDirectory=/home/test_user/ex/
-Environment="PYTHONPATH=/home/test_user/ex/"
-ExecStart=/home/test_user/ex/.venv/bin/python /home/test_user/ex/kvant_bot.py
+WorkingDirectory=/home/test_user/tartartar/
+Environment="PYTHONPATH=/home/test_user/tartartar/"
+ExecStart=/home/test_user/tartartar/.venv/bin/python /home/test_user/tartartar/kvant_bot.py
 
 [Install]
 WantedBy=multi-user.target
