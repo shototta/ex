@@ -19,38 +19,44 @@ connected_pairs: dict[int, int] = {}
 
 @dp.message_handler(commands='start', state='*')
 async def start_handler(message: types.Message, state: FSMContext):
-    await message.answer('Привет! Добро пожаловать в чат-рулетку! Как тебя зовут?')
-    await state.set_state('name')
-
-@dp.message_handler(state='name')
-async def name_handler(message: types.Message, state: FSMContext):
-    name = message.text
-    await state.update_data({'name': name})
-    await message.reply(f'Приятно познакомитья, {name}! Нажми /find чтобы написать')
+    await message.answer('Добро пожаловать в чат поддержки! Нажми /find чтобы написать')
     await state.set_state('ready')
+
 
 @dp.message_handler(commands='find', state='ready')
 async def find_handler(message: types.Message, state: FSMContext):
-    await message.answer('Ищем собеседника...')
+    await message.answer('Соединяем...')
+    await state.set_state('ototot')
+    await go(message, state)
+
+
+@dp.message_handler(state='ototot')
+async def go(message: types.Message, state: FSMContext):
     waiting_users.add(message.from_user.id)
     #print(message.from_user.username)
     for i in tuple(waiting_users):
         if i == 1717383692:
             user_ot = i
+            await state.update_data(user_ot=user_ot)
             waiting_users.remove(i)
+        else:
+            await state.set_state('ototot')
 
-            while len(waiting_users) >= 1:
-                user_1_id = user_ot
-                user_2_id = waiting_users.pop()
 
-                await dp.current_state(chat=user_1_id, user=user_1_id).set_state('chatting')
-                await dp.current_state(chat=user_2_id, user=user_2_id).set_state('chatting')
+    while len(waiting_users) >= 1:
+        data = await state.get_data()
+        user_ot = data['user_ot']
+        user_1_id = user_ot
+        user_2_id = waiting_users.pop()
 
-                connected_pairs[user_1_id] = user_2_id
-                connected_pairs[user_2_id] = user_1_id
+        await dp.current_state(chat=user_1_id, user=user_1_id).set_state('chatting')
+        await dp.current_state(chat=user_2_id, user=user_2_id).set_state('chatting')
 
-                await bot.send_message(chat_id=user_1_id, text='Вы начали общаться')
-                await bot.send_message(chat_id=user_2_id, text='Вы начали общаться')
+        connected_pairs[user_1_id] = user_2_id
+        connected_pairs[user_2_id] = user_1_id
+
+        await bot.send_message(chat_id=user_1_id, text='Вы начали общаться')
+        await bot.send_message(chat_id=user_2_id, text='Вы начали общаться')
 
 
 @dp.message_handler(state='chatting')

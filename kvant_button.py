@@ -7,7 +7,7 @@ b1_3 = KeyboardButton('Распределение')
 b1_4 = KeyboardButton('Поддержка')
 b1_5 = KeyboardButton('Оставить отзыв')
 
-choose_kat = ReplyKeyboardMarkup(resize_keyboard=True).insert(b1_1).insert(b1_2).add(b1_3).insert(b1_4).add(b1_5)
+choose_kat = ReplyKeyboardMarkup(resize_keyboard=True).insert(b1_1).insert(b1_2).add(b1_3)#.insert(b1_4)
 
 b_a = KeyboardButton('Адаптированная программа')
 b_aa = KeyboardButton('Стандартная программа')
@@ -38,7 +38,7 @@ kat_again = ReplyKeyboardMarkup(resize_keyboard=True).insert(kat)
 back = InlineKeyboardButton("перейти", url='http://www.86prometey.edusite.ru/', callback_data='back')
 go_keyboard = InlineKeyboardMarkup().add(back)
 
-tip_info = "я хороший я хороший"
+tip_info = "Рады приветствовать всех, кто захотел познакомиться с деятельностью Детско-юношеского центра «Прометей». \n Наш Центр - это Муниципальное бюджетное образовательное учреждение дополнительного образования работающее по направленностям: \nхудожественная,\n физкультурно-спортивная,\n техническая,\n естественнонаучная."
 
 empty = ReplyKeyboardMarkup()
 

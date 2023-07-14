@@ -35,16 +35,72 @@ async def kat_handler(message: types.Message, state: FSMContext):
     elif answer == "Распределение":
         await state.set_state('bespredrl')
         await bes_handler(message, state)
-    elif answer == "Поддержка":
-        await state.set_state('check')
-        #await check(message, state)
-    elif answer == "Оставить отзыв":
-        await state.set_state('necheck')
+    #elif answer == "Поддержка":
+        #await state.set_state('pip')
+        #await start_handlerrr(message, state)
+    #elif answer == "Оставить отзыв":
+        #await state.set_state('necheck')
         #await check(message, state)
     else:
         await message.answer('Выберите интересующий Вас раздел', reply_markup=choose_kat)
         await state.set_state('vb')
         # асуждаю, но а что поделаешь
+
+
+waiting_users: set[int] = set()
+connected_pairs: dict[int, int] = {}
+
+
+@dp.message_handler(state='pip')
+async def start_handlerrr(message: types.Message, state: FSMContext):
+    await message.answer('Добро пожаловать в чат поддержки! Нажми /find чтобы написать')
+    await state.set_state('ready')
+
+
+@dp.message_handler(commands='find', state='ready')
+async def find_handler(message: types.Message, state: FSMContext):
+    await message.answer('Соединяем...')
+    await state.set_state('ototot')
+    await go(message, state)
+
+
+@dp.message_handler(state='ototot')
+async def go(message: types.Message, state: FSMContext):
+    waiting_users.add(message.from_user.id)
+    # print(message.from_user.username)
+    for i in tuple(waiting_users):
+        if i == 1717383692:
+            user_ot = i
+            await state.update_data(user_ot=user_ot)
+            waiting_users.remove(i)
+        else:
+            await state.set_state('ototot')
+
+    while len(waiting_users) >= 1:
+        data = await state.get_data()
+        user_ot = data['user_ot']
+        user_1_id = user_ot
+        user_2_id = waiting_users.pop()
+
+        await dp.current_state(chat=user_1_id, user=user_1_id).set_state('chatting')
+        await dp.current_state(chat=user_2_id, user=user_2_id).set_state('chatting')
+
+        connected_pairs[user_1_id] = user_2_id
+        connected_pairs[user_2_id] = user_1_id
+
+        await bot.send_message(chat_id=user_1_id, text='Вы начали общаться', reply_markup= kat_again)
+        await state.set_state('kill')
+        await kill_handler(message, state)
+        await bot.send_message(chat_id=user_2_id, text='Вы начали общаться', reply_markup= kat_again)
+        await state.set_state('kill')
+        await kill_handler(message, state)
+
+
+@dp.message_handler(state='chatting')
+async def chatting_handler(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    chatmate_id = connected_pairs[user_id]
+    await bot.send_message(chat_id=chatmate_id, text=message.text)
 
 
 
