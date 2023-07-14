@@ -13,7 +13,7 @@ bot = Bot(token)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 
-main = {"text": "не кликай", "reply_markup": klikerer.keyboard}
+main = {"text": "не кликай", "reply_markup": klikerer.help_keyboard}
 
 @dp.message_handler(commands=['start'], state='*')
 async def process_start(message: types.Message, state: FSMContext):

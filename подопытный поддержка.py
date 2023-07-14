@@ -5,11 +5,6 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemo
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 
-b1 = KeyboardButton('чат 1 на 1')
-b2 = KeyboardButton('групповой чат')
-
-choose_chat_type_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).insert(b1).insert(b2)
-
 
 bot = Bot(token)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -26,31 +21,40 @@ async def start_handler(message: types.Message, state: FSMContext):
 async def name_handler(message: types.Message, state: FSMContext):
     name = message.text
     await state.update_data({'name': name})
-    await message.reply(f'Приятно познакомитья, {name}! Нажми /find чтобы написать')
+    await message.reply(f'Приятно познакомитья, {name}! Нажми /find чтобы начать')
     await state.set_state('ready')
+
 
 @dp.message_handler(commands='find', state='ready')
 async def find_handler(message: types.Message, state: FSMContext):
     await message.answer('Ищем собеседника...')
+
+
+@dp.message_handler(state='set')
+async def find_handler(message: types.Message, state: FSMContext):
     waiting_users.add(message.from_user.id)
-    #print(message.from_user.username)
-    for i in tuple(waiting_users):
-        if i == 1717383692:
-            user_ot = i
-            waiting_users.remove(i)
 
+    for el in waiting_users:
+        if el == 1717383692:
+            user_ot = el
+
+            #print(message.from_user.username)
             while len(waiting_users) >= 1:
-                user_1_id = user_ot
-                user_2_id = waiting_users.pop()
+                user_1_id = waiting_users.pop()
+                user_2_id = user_ot
 
-                await dp.current_state(chat=user_1_id, user=user_1_id).set_state('chatting')
-                await dp.current_state(chat=user_2_id, user=user_2_id).set_state('chatting')
+                if user_1_id != 1717383692:
+                    await dp.current_state(chat=user_1_id, user=user_1_id).set_state('chatting')
+                    await dp.current_state(chat=user_2_id, user=user_2_id).set_state('chatting')
 
-                connected_pairs[user_1_id] = user_2_id
-                connected_pairs[user_2_id] = user_1_id
+                    connected_pairs[user_1_id] = user_2_id
+                    connected_pairs[user_2_id] = user_1_id
 
-                await bot.send_message(chat_id=user_1_id, text='Вы начали общаться')
-                await bot.send_message(chat_id=user_2_id, text='Вы начали общаться')
+                    await bot.send_message(chat_id=user_1_id, text='Вы начали общаться')
+                    await bot.send_message(chat_id=user_2_id, text='Вы начали общаться')
+
+                else:
+                    await state.set_state('set')
 
 
 @dp.message_handler(state='chatting')
